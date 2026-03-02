@@ -8,7 +8,6 @@ public static void main(String[] args) throws IOException {
 
     String path = "D:\\GeneratorJSON\\GeneratorJSON\\UserData.xlsx";
 
-
     File data = new File(path);
 
     if (!data.exists()) {
@@ -19,10 +18,7 @@ public static void main(String[] args) throws IOException {
         String txtPath = "D:\\GeneratorJSON\\GeneratorJSON\\UserData.txt";
         File txtFile = new File(txtPath);
 
-        if (txtFile.exists()) {
-            System.out.println("Найден текстовый файл");
-            processTextFile(txtFile);
-        }
+
         return;
     }
 
@@ -34,68 +30,31 @@ public static void main(String[] args) throws IOException {
     String fileName = data.getName().toLowerCase();
 
     if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-        processExcelFile(data);
-    }
-    else {
-        processTextFile(data);
+        User randomU = processExcelFile(data);
+
+        Random rand = new Random();
+
+        Data dataPart = new Data();
+        dataPart.setUser_id(randomU.getUser_id());
+        dataPart.setFirstname(randomU.getFirstname());
+        dataPart.setLastname(randomU.getLastname());
+
+        TransactionType[] types = TransactionType.values();
+        TransactionType type = types[rand.nextInt(types.length)];
+        dataPart.setType(type);
+
+        //Сумма транзакции
+        double randomDouble = rand.nextDouble() * 10000;
+        BigDecimal sum = BigDecimal.valueOf(randomDouble)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        dataPart.setSum(sum);
+        System.out.println(dataPart.toString());
     }
 
 }
 
-public static void processTextFile(File file) {
-
-    try {
-
-
-        List<String> lines = Files.readAllLines(file.toPath(), Charset.forName("windows-1251"));
-
-        if (lines.isEmpty()) {
-            System.err.println(" Файл пуст");
-            return;
-        }
-
-        List<Integer> idList = new ArrayList<>();
-        List<String> firstNameList = new ArrayList<>();
-        List<String> lastNameList = new ArrayList<>();
-
-        for (String line : lines) {
-            line = line.trim();
-            if (line.isEmpty()) continue;
-
-            String[] parts;
-            if (line.contains("\t")) {
-                parts = line.split("\t");
-            } else if (line.contains(",")) {
-                parts = line.split(",");
-            } else {
-                parts = line.split("\\s+");
-            }
-
-            if (parts.length >= 3) {
-                try {
-                    int id = Integer.parseInt(parts[0].trim());
-                    String firstName = parts[1].trim();
-                    String lastName = parts[2].trim();
-
-                    idList.add(id);
-                    firstNameList.add(firstName);
-                    lastNameList.add(lastName);
-
-                } catch (NumberFormatException e) {
-                    System.err.println("Ошибка в строке: " + line);
-                }
-            }
-        }
-
-        processData(idList, firstNameList, lastNameList);
-
-    } catch (IOException e) {
-        System.err.println("Ошибка чтения файла: " + e.getMessage());
-        e.printStackTrace();
-    }
-}
-
-public static void processExcelFile(File file) {
+public static User processExcelFile(File file) {
     List<Integer> idList = new ArrayList<>();
     List<String> firstNameList = new ArrayList<>();
     List<String> lastNameList = new ArrayList<>();
@@ -146,12 +105,15 @@ public static void processExcelFile(File file) {
             }
         }
 
-        processData(idList, firstNameList, lastNameList);
+        return processData(idList, firstNameList, lastNameList);
 
     } catch (IOException e) {
         System.err.println("Ошибка чтения Excel файла: " + e.getMessage());
         e.printStackTrace();
     }
+
+    //Добавить кастомный глобальный Exception
+    return null;
 }
 
 private static int getIntValue(Cell cell, FormulaEvaluator evaluator) {
@@ -174,7 +136,6 @@ private static int getIntValue(Cell cell, FormulaEvaluator evaluator) {
             return 0;
     }
 }
-
 
 private static String getStringValue(Cell cell, FormulaEvaluator evaluator) {
     if (cell == null) return "";
@@ -199,14 +160,13 @@ private static String getStringValue(Cell cell, FormulaEvaluator evaluator) {
     }
 }
 
-
-private static void processData(List<Integer> idList,
+private static User processData(List<Integer> idList,
                                 List<String> firstNameList,
                                 List<String> lastNameList) {
 
     if (idList.isEmpty()) {
         System.err.println("Нет данных для обработки");
-        return;
+        return null;
     }
 
     int[] ids = new int[idList.size()];
@@ -219,5 +179,8 @@ private static void processData(List<Integer> idList,
         lastNames[i] = lastNameList.get(i);
     }
 
+    Random random = new Random();
+    int randomID = random.nextInt(ids.length);
 
+    return new User(ids[randomID], firstNames[randomID], lastNames[randomID]);
 }
