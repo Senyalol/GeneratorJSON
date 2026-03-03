@@ -6,7 +6,7 @@ import Data.TransactionType;
 import java.io.*;
 import java.util.*;
 
-public static void main(String[] args) throws IOException {
+public static void main(String[] args) throws IOException, InterruptedException {
 
     String path = "D:\\GeneratorJSON\\GeneratorJSON\\UserData.xlsx";
 
@@ -36,8 +36,9 @@ public static void main(String[] args) throws IOException {
         UserGenerator userGenerator = new UserGenerator();
 
         //Поток генератора
-        for(int i = 0; i < 10; i++) {
+        while(true) {
 
+            Thread.sleep(2000);
             User randomU = userGenerator.processExcelFile(data);
 
             Random rand = new Random();
