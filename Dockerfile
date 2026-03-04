@@ -1,27 +1,24 @@
-# Используем официальный образ Java
-FROM openjdk:23-jdk-slim
+FROM maven:3.9.9-eclipse-temurin-23 AS build
 
-# Устанавливаем рабочую директорию
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package assembly:single
+
+# Финальный образ
+FROM eclipse-temurin:23-jre
+
 WORKDIR /app
 
-# Копируем jar файл (собранный через Maven)
-COPY target/GeneratorJSON-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
+# Копируем собранный JAR
+COPY --from=build /target/GeneratorJSON-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
 
-# Копируем конфигурационные файлы (если есть)
-COPY config/ /app/config/
+# Копируем конфигурацию
+COPY config/ ./config/
 
 # Создаем директорию для логов
 RUN mkdir -p /app/logs
 
-# Указываем переменные окружения для Kafka
 ENV KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 ENV KAFKA_TOPIC=user-transactions
 
-# Запускаем приложение
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
-#FROM ubuntu:latest
-#LABEL authors="semka"
-#
-#ENTRYPOINT ["top", "-b"]

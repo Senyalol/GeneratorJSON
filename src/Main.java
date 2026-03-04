@@ -56,7 +56,7 @@ public static void main(String[] args) throws IOException, InterruptedException 
         //Поток генератора
         while(true) {
 
-            Thread.sleep(2000);
+            // Thread.sleep(2000);
             User randomU = userGenerator.processExcelFile(data);
 
             Random rand = new Random();
