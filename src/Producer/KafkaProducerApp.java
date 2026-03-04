@@ -49,7 +49,7 @@ public class KafkaProducerApp {
         int successCount = 0;
         int errorCount = 0;
 
-        try (KafkaProducer<String, String> producer = new org.apache.kafka.clients.producer.KafkaProducer<Object, String>(props)) {
+        try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
 
             for (int i = 1; i <= messagesCount; i++) {
                 try {

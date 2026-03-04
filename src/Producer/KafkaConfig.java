@@ -8,9 +8,6 @@ public class KafkaConfig {
     private static final String DEFAULT_BOOTSTRAP_SERVERS = "localhost:9092";
     private static final String DEFAULT_TOPIC = "user-transactions";
 
-    /**
-     * Создает базовую конфигурацию для Kafka продюсера
-     */
     public static Properties createProducerConfig(String bootstrapServers) {
         Properties props = new Properties();
 
@@ -30,16 +27,10 @@ public class KafkaConfig {
         return props;
     }
 
-    /**
-     * Создает конфигурацию с настройками по умолчанию
-     */
     public static Properties createDefaultConfig() {
         return createProducerConfig(DEFAULT_BOOTSTRAP_SERVERS);
     }
 
-    /**
-     * Получает настройки из переменных окружения
-     */
     public static String getBootstrapServersFromEnv() {
         String env = System.getenv("KAFKA_BOOTSTRAP_SERVERS");
         return env != null ? env : DEFAULT_BOOTSTRAP_SERVERS;
@@ -50,9 +41,6 @@ public class KafkaConfig {
         return env != null ? env : DEFAULT_TOPIC;
     }
 
-    /**
-     * Проверка доступности Kafka (можно использовать для тестов)
-     */
     public static String getConfigInfo() {
         return String.format("Kafka Config: bootstrap=%s, topic=%s",
                 getBootstrapServersFromEnv(), getTopicFromEnv());

@@ -1,3 +1,8 @@
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import Data.Data;
 import Data.User;
 import Data.UserGenerator;
@@ -5,6 +10,10 @@ import Data.TransactionType;
 
 import java.io.*;
 import java.util.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import Producer.KafkaConfig;
 
 public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -35,6 +44,15 @@ public static void main(String[] args) throws IOException, InterruptedException 
 
         UserGenerator userGenerator = new UserGenerator();
 
+        // Конфигурация Kafka
+        String bootstrapServers = KafkaConfig.getBootstrapServersFromEnv();
+        String topic = KafkaConfig.getTopicFromEnv();
+
+        Properties kafkaProps = KafkaConfig.createProducerConfig(bootstrapServers);
+        KafkaProducer<String, String> producer = new KafkaProducer<>(kafkaProps);
+
+        ObjectMapper mapper = new ObjectMapper();
+
         //Поток генератора
         while(true) {
 
@@ -58,7 +76,25 @@ public static void main(String[] args) throws IOException, InterruptedException 
                     .setScale(2, RoundingMode.HALF_UP);
 
             dataPart.setSum(sum);
-            System.out.println(dataPart.toString());
+
+            try {
+                // Сериализуем объект Data в JSON
+                String jsonValue = mapper.writeValueAsString(dataPart);
+
+                // Формируем и отправляем сообщение в Kafka
+                ProducerRecord<String, String> record =
+                        new ProducerRecord<>(topic, String.valueOf(dataPart.getUser_id()), jsonValue);
+
+                RecordMetadata metadata = producer.send(record).get();
+
+                System.out.printf(
+                        "Отправлено в Kafka: topic=%s partition=%d offset=%d data=%s%n",
+                        metadata.topic(), metadata.partition(), metadata.offset(), dataPart
+                );
+            } catch (Exception e) {
+                System.err.println("Ошибка отправки в Kafka: " + e.getMessage());
+                e.printStackTrace();
+            }
 
         }
         //Поток генератора
