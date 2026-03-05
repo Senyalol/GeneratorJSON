@@ -1,0 +1,8 @@
+Main.class
+Data\UserGenerator$1.class
+Data\User.class
+Producer\KafkaConfig.class
+Producer\KafkaProducerApp.class
+Data\UserGenerator.class
+Data\TransactionType.class
+Data\Data.class
