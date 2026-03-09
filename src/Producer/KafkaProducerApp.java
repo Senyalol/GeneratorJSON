@@ -6,15 +6,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import Data.UserGenerator;
 import java.io.*;
-import java.math.BigDecimal;
+//import java.math.BigDecimal;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutionException;
 
 import Data.Data;
-import Data.TransactionType;
+//import Data.TransactionType;
 
 public class KafkaProducerApp {
 
@@ -27,14 +28,13 @@ public class KafkaProducerApp {
 
         String bootstrapServers = System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092");
         String topic = System.getenv().getOrDefault("KAFKA_TOPIC", "user-transactions");
-        String messagesCountStr = System.getenv().getOrDefault("MESSAGES_COUNT", "100");
+       // String messagesCountStr = System.getenv().getOrDefault("MESSAGES_COUNT", "100");
         String intervalMsStr = System.getenv().getOrDefault("INTERVAL_MS", "1000");
 
-        int messagesCount = Integer.parseInt(messagesCountStr);
         int intervalMs = Integer.parseInt(intervalMsStr);
 
-        log.info("Конфигурация: bootstrap={}, topic={}, messages={}, interval={}ms",
-                bootstrapServers, topic, messagesCount, intervalMs);
+        log.info("Конфигурация: bootstrap={}, topic={}, interval={}ms",
+                bootstrapServers, topic, intervalMs);
 
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -51,9 +51,16 @@ public class KafkaProducerApp {
 
         try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
 
-            for (int i = 1; i <= messagesCount; i++) {
+            while (true) {
                 try {
-                    Data data = generateRandomData(i);
+                    Data data = generateRandomData();
+                    if (data == null) {
+                        log.error("Не удалось сгенерировать данные для сообщения , пропуск");
+                        errorCount++;
+                        Thread.sleep(intervalMs);
+                        continue;
+                    }
+
                     String jsonValue = mapper.writeValueAsString(data);
 
                     ProducerRecord<String, String> record =
@@ -62,7 +69,7 @@ public class KafkaProducerApp {
                     RecordMetadata metadata = producer.send(record).get(5, TimeUnit.SECONDS);
 
                     log.info("Сообщение {} отправлено: partition={}, offset={}, data={}",
-                            i, metadata.partition(), metadata.offset(), data);
+                             metadata.partition(), metadata.offset(), data);
 
                     successCount++;
                     Thread.sleep(intervalMs);
@@ -83,7 +90,7 @@ public class KafkaProducerApp {
                 }
             }
 
-            producer.flush();
+            //producer.flush();
 
         } catch (Exception e) {
             log.error("Критическая ошибка: {}", e.getMessage(), e);
@@ -104,27 +111,29 @@ public class KafkaProducerApp {
         }
     }
 
-    private static Data generateRandomData(int id) {
+    private static Data generateRandomData() {
 
-        Data data = new Data();
-        data.setUser_id(id);
+//        Data data = new Data();
+//        data.setUser_id(id);
+//
+//        String[] firstNames = {"Джеймс", "Майкл", "Роберт", "Дэвид", "Александр",
+//                "Дмитрий", "Иван", "Сергей", "Андрей", "Алексей"};
+//        String[] lastNames = {"Андерсон", "Браун", "Джонсон", "Миллер", "Иванов",
+//                "Смирнов", "Кузнецов", "Попов", "Петров", "Соколов"};
+//
+//        data.setFirstname(firstNames[random.nextInt(firstNames.length)]);
+//        data.setLastname(lastNames[random.nextInt(lastNames.length)]);
+//
+//        TransactionType[] types = TransactionType.values();
+//        if (types.length > 0) {
+//            data.setType(types[random.nextInt(types.length)]);
+//        }
+//
+//        data.setSum(BigDecimal.valueOf(random.nextInt(10000) + random.nextDouble()));
 
-        String[] firstNames = {"Джеймс", "Майкл", "Роберт", "Дэвид", "Александр",
-                "Дмитрий", "Иван", "Сергей", "Андрей", "Алексей"};
-        String[] lastNames = {"Андерсон", "Браун", "Джонсон", "Миллер", "Иванов",
-                "Смирнов", "Кузнецов", "Попов", "Петров", "Соколов"};
 
-        data.setFirstname(firstNames[random.nextInt(firstNames.length)]);
-        data.setLastname(lastNames[random.nextInt(lastNames.length)]);
 
-        TransactionType[] types = TransactionType.values();
-        if (types.length > 0) {
-            data.setType(types[random.nextInt(types.length)]);
-        }
-
-        data.setSum(BigDecimal.valueOf(random.nextInt(10000) + random.nextDouble()));
-
-        return data;
+        return UserGenerator.GenerateData();
 
     }
 }

@@ -6,13 +6,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class UserGenerator {
 
-    public static User processExcelFile(File file) {
+    private static User processExcelFile(File file) {
         List<Integer> idList = new ArrayList<>();
         List<String> firstNameList = new ArrayList<>();
         List<String> lastNameList = new ArrayList<>();
@@ -141,6 +143,60 @@ public class UserGenerator {
 
         return new User(ids[randomID], firstNames[randomID], lastNames[randomID]);
 
+    }
+
+    public static Data GenerateData() {
+
+        // Путь к файлу: сначала берём из переменной окружения, иначе используем файл рядом с jar/проектом
+        String path = System.getenv().getOrDefault("USER_DATA_FILE", "UserData.xlsx");
+
+        File data = new File(path);
+
+        if (!data.exists()) {
+            System.err.println("Файл не найден: " + data.getAbsolutePath());
+            System.err.println("Текущая директория: " + System.getProperty("user.dir"));
+            return null;
+        }
+
+        if (!data.canRead()) {
+            System.err.println("Нет прав на чтение файла: " + path);
+            return null;
+        }
+
+        String fileName = data.getName().toLowerCase();
+
+        if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+
+            UserGenerator userGenerator = new UserGenerator();
+
+            User randomU = userGenerator.processExcelFile(data);
+            if (randomU == null) {
+                System.err.println("Не удалось получить пользователя из Excel, пропуск генерации данных");
+                return null;
+            }
+
+            Random rand = new Random();
+
+            Data dataPart = new Data();
+            dataPart.setUser_id(randomU.getUser_id());
+            dataPart.setFirstname(randomU.getFirstname());
+            dataPart.setLastname(randomU.getLastname());
+
+            TransactionType[] types = TransactionType.values();
+            TransactionType type = types[rand.nextInt(types.length)];
+            dataPart.setType(type);
+
+            //Сумма транзакции
+            double randomDouble = rand.nextDouble() * 10000;
+            BigDecimal sum = BigDecimal.valueOf(randomDouble)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            dataPart.setSum(sum);
+
+            return dataPart;
+        }
+
+        return null;
     }
 
 }
