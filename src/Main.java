@@ -12,7 +12,6 @@ import java.io.*;
 import java.util.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import Producer.KafkaConfig;
 
 public static void main(String[] args) throws IOException, InterruptedException {

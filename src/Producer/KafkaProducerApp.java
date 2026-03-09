@@ -23,7 +23,7 @@ public class KafkaProducerApp {
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        log.info("Запуск Kafka Producer приложения...");
+        log.info("Запуск Kafka Producer приложения");
 
         String bootstrapServers = System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092");
         String topic = System.getenv().getOrDefault("KAFKA_TOPIC", "user-transactions");
@@ -61,24 +61,24 @@ public class KafkaProducerApp {
 
                     RecordMetadata metadata = producer.send(record).get(5, TimeUnit.SECONDS);
 
-                    log.info("✓ Сообщение {} отправлено: partition={}, offset={}, data={}",
+                    log.info("Сообщение {} отправлено: partition={}, offset={}, data={}",
                             i, metadata.partition(), metadata.offset(), data);
 
                     successCount++;
                     Thread.sleep(intervalMs);
 
                 } catch (JsonProcessingException e) {
-                    log.error("✗ Ошибка сериализации JSON: {}", e.getMessage());
+                    log.error("Ошибка сериализации JSON: {}", e.getMessage());
                     errorCount++;
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    log.error("✗ Прерывание потока: {}", e.getMessage());
+                    log.error("Прерывание потока: {}", e.getMessage());
                     errorCount++;
                 } catch (ExecutionException e) {
-                    log.error("✗ Ошибка выполнения: {}", e.getCause().getMessage());
+                    log.error("Ошибка выполнения: {}", e.getCause().getMessage());
                     errorCount++;
                 } catch (Exception e) {
-                    log.error("✗ Неизвестная ошибка: {}", e.getMessage());
+                    log.error("Неизвестная ошибка: {}", e.getMessage());
                     errorCount++;
                 }
             }
@@ -105,6 +105,7 @@ public class KafkaProducerApp {
     }
 
     private static Data generateRandomData(int id) {
+
         Data data = new Data();
         data.setUser_id(id);
 
@@ -124,5 +125,6 @@ public class KafkaProducerApp {
         data.setSum(BigDecimal.valueOf(random.nextInt(10000) + random.nextDouble()));
 
         return data;
+
     }
 }

@@ -22,7 +22,6 @@ public class UserGenerator {
 
             Sheet sheet = workbook.getSheetAt(0);
 
-
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
             for (Row row : sheet) {
