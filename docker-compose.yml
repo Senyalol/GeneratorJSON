@@ -22,17 +22,17 @@ services:
       - kafka_data:/var/lib/kafka/data
     networks:
       - app-network
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    ports:
-      - "9090:9090"
-    environment:
-      SERVER_PORT: 9090
-      DYNAMIC_CONFIG_ENABLED: trued
-    depends_on:
-      - kafka
-    networks:
-      - app-network
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    ports:
+#      - "9090:9090"
+#    environment:
+#      SERVER_PORT: 9090
+#      DYNAMIC_CONFIG_ENABLED: trued
+#    depends_on:
+#      - kafka
+#    networks:
+#      - app-network
   producer:
     build: .
     container_name: producer
