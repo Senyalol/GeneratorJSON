@@ -22,17 +22,25 @@ services:
       - kafka_data:/var/lib/kafka/data
     networks:
       - app-network
-#  kafka-ui:
-#    image: provectuslabs/kafka-ui:latest
-#    ports:
-#      - "9090:9090"
-#    environment:
-#      SERVER_PORT: 9090
-#      DYNAMIC_CONFIG_ENABLED: trued
-#    depends_on:
-#      - kafka
-#    networks:
-#      - app-network
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "9090:8080"  # Важно: внутри контейнера UI слушает порт 8080
+    environment:
+      # Конфигурация кластера Kafka
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka_producer:9092"
+      # Метаданные кластера (опционально)
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9092
+      # Таймауты и настройки
+      KAFKA_CLUSTERS_0_READONLY: "false"
+      # Логирование
+      LOGGING_LEVEL_ROOT: "INFO"
+    depends_on:
+      - kafka
+    networks:
+      - app-network
   producer:
     build: .
     container_name: producer
