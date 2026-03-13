@@ -147,7 +147,6 @@ public class UserGenerator {
 
     public static Data GenerateData() {
 
-        // Путь к файлу: сначала берём из переменной окружения, иначе используем файл рядом с jar/проектом
         String path = System.getenv().getOrDefault("USER_DATA_FILE", "UserData.xlsx");
 
         File data = new File(path);

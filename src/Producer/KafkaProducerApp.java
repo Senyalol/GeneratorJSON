@@ -24,7 +24,7 @@ public class KafkaProducerApp {
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        log.info("Запуск Kafka Producer приложения");
+        log.info("Запуск Kafka Producer");
 
         String bootstrapServers = System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092");
         String topic = System.getenv().getOrDefault("KAFKA_TOPIC", "user-transactions");
@@ -130,8 +130,6 @@ public class KafkaProducerApp {
 //        }
 //
 //        data.setSum(BigDecimal.valueOf(random.nextInt(10000) + random.nextDouble()));
-
-
 
         return UserGenerator.GenerateData();
 
