@@ -192,6 +192,8 @@ public class UserGenerator {
 
             dataPart.setSum(sum);
 
+            dataPart.setEvent_time(System.currentTimeMillis());
+
             return dataPart;
         }
 
