@@ -113,24 +113,6 @@ public class KafkaProducerApp {
 
     private static Data generateRandomData() {
 
-//        Data data = new Data();
-//        data.setUser_id(id);
-//
-//        String[] firstNames = {"Джеймс", "Майкл", "Роберт", "Дэвид", "Александр",
-//                "Дмитрий", "Иван", "Сергей", "Андрей", "Алексей"};
-//        String[] lastNames = {"Андерсон", "Браун", "Джонсон", "Миллер", "Иванов",
-//                "Смирнов", "Кузнецов", "Попов", "Петров", "Соколов"};
-//
-//        data.setFirstname(firstNames[random.nextInt(firstNames.length)]);
-//        data.setLastname(lastNames[random.nextInt(lastNames.length)]);
-//
-//        TransactionType[] types = TransactionType.values();
-//        if (types.length > 0) {
-//            data.setType(types[random.nextInt(types.length)]);
-//        }
-//
-//        data.setSum(BigDecimal.valueOf(random.nextInt(10000) + random.nextDouble()));
-
         return UserGenerator.GenerateData();
 
     }

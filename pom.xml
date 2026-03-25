@@ -40,7 +40,6 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>3.4.1</version>
-            <!-- Отключаем старую slf4j-api 1.7.x, чтобы не конфликтовала с 2.x -->
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -58,7 +57,7 @@
         </dependency>
         <!-- Jackson для JSON -->
 
-        <!-- SLF4J: API + простая реализация (simple) -->
+        <!-- SLF4J: -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

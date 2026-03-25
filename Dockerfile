@@ -10,7 +10,6 @@ WORKDIR /app
 
 COPY --from=build /target/GeneratorJSON-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
 
-# Excel-файл с данными (лежит рядом с pom.xml в проекте)
 COPY UserData.xlsx ./UserData.xlsx
 
 COPY config/ ./config/
