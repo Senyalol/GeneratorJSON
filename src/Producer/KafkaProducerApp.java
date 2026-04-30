@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import Data.UserGenerator;
 import java.io.*;
 //import java.math.BigDecimal;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutionException;
+import Data.User;
 
 import Data.Data;
 //import Data.TransactionType;
@@ -22,6 +24,21 @@ public class KafkaProducerApp {
     private static final Logger log = LoggerFactory.getLogger(KafkaProducerApp.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Random random = new Random();
+
+    private static void sendUser(KafkaProducer<String, String> producer, String topic, User user) {
+        try {
+            String jsonValue = mapper.writeValueAsString(user);
+            ProducerRecord<String, String> record = new ProducerRecord<>(
+                    topic,
+                    String.valueOf(user.getUser_id()),
+                    jsonValue
+            );
+            RecordMetadata metadata = producer.send(record).get(5, TimeUnit.SECONDS);
+            log.info("User отправлен: {} | partition={}, offset={}", user, metadata.partition(), metadata.offset());
+        } catch (Exception e) {
+            log.error("Ошибка отправки user: {}", e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         log.info("Запуск Kafka Producer");
@@ -49,7 +66,19 @@ public class KafkaProducerApp {
         int successCount = 0;
         int errorCount = 0;
 
+        String userTopic = KafkaConfig.getUserTopicFromEnv();
+        KafkaConfig.createTopicWithTwoPartitions(userTopic);
+
         try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
+
+            List<User> users = UserGenerator.prepareToSend();
+            if (users != null && !users.isEmpty()) {
+                for(User user : users){
+                    sendUser(producer, userTopic, user);
+                }
+            } else {
+                log.warn("Нет пользователей для отправки");
+            }
 
             while (true) {
                 try {
