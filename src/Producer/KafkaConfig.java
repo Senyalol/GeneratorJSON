@@ -61,7 +61,6 @@ public class KafkaConfig {
     }
 
     public static void createTopic(String topicName, int partitions, short replicationFactor) {
-        // Используем существующий метод для создания пропсов
         Properties props = createProducerConfig(getBootstrapServersFromEnv());
 
         try (AdminClient adminClient = AdminClient.create(props)) {
