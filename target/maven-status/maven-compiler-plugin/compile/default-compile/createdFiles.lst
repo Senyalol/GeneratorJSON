@@ -4,5 +4,7 @@ Data\User.class
 Producer\KafkaConfig.class
 Producer\KafkaProducerApp.class
 Data\UserGenerator.class
+ORM\PostgreSQLUtils.class
 Data\TransactionType.class
+ORM\FlywayApply.class
 Data\Data.class

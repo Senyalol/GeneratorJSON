@@ -8,11 +8,14 @@ FROM eclipse-temurin:23-jre
 
 WORKDIR /app
 
-COPY --from=build /target/GeneratorJSON-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
+#COPY --from=build /target/GeneratorJSON-1.0-SNAPSHOT-jar-with-dependencies.jar app.jar
+COPY --from=build /target/GeneratorJSON-1.0-SNAPSHOT.jar app.jar
 
 COPY UserData.xlsx ./UserData.xlsx
 
 COPY config/ ./config/
+
+COPY src/db/migration ./db/migration
 
 RUN mkdir -p /app/logs
 

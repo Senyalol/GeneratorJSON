@@ -1,5 +1,7 @@
 package Producer;
 
+import ORM.FlywayApply;
+import ORM.PostgreSQLUtils;
 import org.apache.kafka.clients.producer.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,6 +43,20 @@ public class KafkaProducerApp {
     }
 
     public static void main(String[] args) {
+
+        String dbName = "bankUsers"; //System.getenv("POSTGRES_DB");
+        String systemUrlDB = "jdbc:postgresql://postgres-bank:5432/postgres";
+        String urlDB = "jdbc:postgresql://postgres-bank:5432/bankUsers"; //System.getenv("POSTGRES_URL_DB");
+        String dbUsername = "postgres"; //System.getenv("POSTGRES_USER");
+        String dbPassword = "1111"; //System.getenv("POSTGRES_PASSWORD");
+
+        log.info("Создание Базы данных: {}", dbName);
+        PostgreSQLUtils.createDatabase(systemUrlDB, dbName, dbUsername, dbPassword);
+
+        log.info("Применение миграций Flyway");
+        FlywayApply migrations = new FlywayApply(urlDB, dbUsername, dbPassword);
+        migrations.ApplyMigration();
+
         log.info("Запуск Kafka Producer");
 
         String bootstrapServers = System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092");
@@ -71,7 +87,7 @@ public class KafkaProducerApp {
 
         try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
 
-            List<User> users = UserGenerator.prepareToSend();
+            List<User> users = PostgreSQLUtils.getAllUsersFromDB(urlDB,dbUsername,dbPassword,dbName);
             if (users != null && !users.isEmpty()) {
                 for(User user : users){
                     sendUser(producer, userTopic, user);

@@ -1,4 +1,5 @@
-version: '3.8'
+#version: '3.8'
+
 services:
   kafka:
     image: apache/kafka:latest
@@ -37,18 +38,48 @@ services:
       - kafka
     networks:
       - app-network
+  postgres-bank:
+    image: postgres:17
+    container_name: postgres-bank # jdbc:postgresql://localhost:5430/bankUsers
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1111
+      POSTGRES_DB: bankUsers
+      # Перенести ниже для producer (из за этого переменные окружения для producer не вытягивались)
+    ports:
+      - "5430:5432"
+    volumes:
+      - bankData:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d bankUsers" ]  # Проверяем, что БД готова принимать запросы
+      interval: 5s      # Проверяем каждые 5 секунд
+      timeout: 5s       # Таймаут проверки 5 секунд
+      retries: 10       # Количество попыток до признания контейнера unhealthy
+      start_period: 10s # Даём 10 секунд на начальный запуск
+
   producer:
     build: .
     container_name: producer
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC: user-transactions
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1111
+      POSTGRES_DB: bankUsers
+      POSTGRES_URL_DB: jdbc:postgresql://postgres-bank:5432/bankUsers
     depends_on:
-      - kafka
+        kafka:
+          condition: service_started
+        postgres-bank:
+          condition: service_healthy
     networks:
       - app-network
+
 volumes:
   kafka_data:
+  bankData:
 networks:
   app-network:
     driver: bridge
