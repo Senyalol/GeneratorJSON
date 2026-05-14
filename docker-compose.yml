@@ -23,21 +23,21 @@ services:
       - kafka_data:/var/lib/kafka/data
     networks:
       - app-network
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "9090:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: "local"
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka_producer:9092"
-      KAFKA_CLUSTERS_0_METRICS_PORT: 9092
-      KAFKA_CLUSTERS_0_READONLY: "false"
-      LOGGING_LEVEL_ROOT: "INFO"
-    depends_on:
-      - kafka
-    networks:
-      - app-network
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    container_name: kafka-ui
+#    ports:
+#      - "9090:8080"
+#    environment:
+#      KAFKA_CLUSTERS_0_NAME: "local"
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka_producer:9092"
+#      KAFKA_CLUSTERS_0_METRICS_PORT: 9092
+#      KAFKA_CLUSTERS_0_READONLY: "false"
+#      LOGGING_LEVEL_ROOT: "INFO"
+#    depends_on:
+#      - kafka
+#    networks:
+#      - app-network
   postgres-bank:
     image: postgres:17
     container_name: postgres-bank # jdbc:postgresql://localhost:5430/bankUsers
@@ -45,7 +45,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1111
       POSTGRES_DB: bankUsers
-      # Перенести ниже для producer (из за этого переменные окружения для producer не вытягивались)
     ports:
       - "5430:5432"
     volumes:
@@ -68,6 +67,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1111
       POSTGRES_DB: bankUsers
+      POSTGRES_SYSTEM_URL_DB: jdbc:postgresql://postgres-bank:5432/postgres
       POSTGRES_URL_DB: jdbc:postgresql://postgres-bank:5432/bankUsers
     depends_on:
         kafka:

@@ -5,9 +5,11 @@ import Data.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PostgreSQLUtils {
 
+    //Создать базу данных
     public static void createDatabase(String url, String dbName,
                                       String adminUser, String adminPassword) {
 
@@ -42,6 +44,31 @@ public class PostgreSQLUtils {
                 return rs.next();
             }
         }
+    }
+
+    //Вернуть случайного пользователя
+    public static User getRandomUser(String url, String dbUsername, String dbPassword, String dbName){
+
+        String sqlQuery = "SELECT * FROM users ORDER BY RANDOM() LIMIT 1";;
+
+        try(Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+            Statement stmt = connection.createStatement();
+            ResultSet resultSet = stmt.executeQuery(sqlQuery)){
+
+                if (resultSet.next()) {
+                    User randomUser = new User();
+                    randomUser.setUser_id(resultSet.getInt("user_id"));
+                    randomUser.setFirstname(resultSet.getString("firstname"));
+                    randomUser.setLastname(resultSet.getString("lastname"));
+                    return randomUser;
+
+            }
+            throw new RuntimeException("No users found in database");
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     //Получить всех пользователей

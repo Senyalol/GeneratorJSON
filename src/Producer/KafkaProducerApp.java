@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import Data.UserGenerator;
 import java.io.*;
-//import java.math.BigDecimal;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -19,7 +18,6 @@ import java.util.concurrent.ExecutionException;
 import Data.User;
 
 import Data.Data;
-//import Data.TransactionType;
 
 public class KafkaProducerApp {
 
@@ -44,11 +42,11 @@ public class KafkaProducerApp {
 
     public static void main(String[] args) {
 
-        String dbName = "bankUsers"; //System.getenv("POSTGRES_DB");
-        String systemUrlDB = "jdbc:postgresql://postgres-bank:5432/postgres";
-        String urlDB = "jdbc:postgresql://postgres-bank:5432/bankUsers"; //System.getenv("POSTGRES_URL_DB");
-        String dbUsername = "postgres"; //System.getenv("POSTGRES_USER");
-        String dbPassword = "1111"; //System.getenv("POSTGRES_PASSWORD");
+        String dbName = System.getenv("POSTGRES_DB");
+        String systemUrlDB = System.getenv("POSTGRES_SYSTEM_URL_DB");
+        String urlDB = System.getenv("POSTGRES_URL_DB");
+        String dbUsername = System.getenv("POSTGRES_USER");
+        String dbPassword = System.getenv("POSTGRES_PASSWORD");
 
         log.info("Создание Базы данных: {}", dbName);
         PostgreSQLUtils.createDatabase(systemUrlDB, dbName, dbUsername, dbPassword);
@@ -96,9 +94,10 @@ public class KafkaProducerApp {
                 log.warn("Нет пользователей для отправки");
             }
 
+            //Потоковая генерация данных
             while (true) {
                 try {
-                    Data data = generateRandomData();
+                    Data data = generateRandomData(urlDB,dbUsername,dbPassword,dbName);
                     if (data == null) {
                         log.error("Не удалось сгенерировать данные для сообщения , пропуск");
                         errorCount++;
@@ -156,9 +155,9 @@ public class KafkaProducerApp {
         }
     }
 
-    private static Data generateRandomData() {
+    private static Data generateRandomData(String url, String dbUsername, String dbPassword, String dbName) {
 
-        return UserGenerator.GenerateData();
+        return UserGenerator.GenerateData(url,dbUsername,dbPassword,dbName);
 
     }
 }
