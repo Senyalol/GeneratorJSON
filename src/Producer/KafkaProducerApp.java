@@ -1,5 +1,6 @@
 package Producer;
 
+import DTO.UserMapper;
 import ORM.FlywayApply;
 import ORM.PostgreSQLUtils;
 import org.apache.kafka.clients.producer.*;
@@ -16,6 +17,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutionException;
 import Data.User;
+import DTO.UserDTO;
 
 import Data.Data;
 
@@ -25,16 +27,16 @@ public class KafkaProducerApp {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Random random = new Random();
 
-    private static void sendUser(KafkaProducer<String, String> producer, String topic, User user) {
+    private static void sendUser(KafkaProducer<String, String> producer, String topic, UserDTO userDTO) {
         try {
-            String jsonValue = mapper.writeValueAsString(user);
+            String jsonValue = mapper.writeValueAsString(userDTO);
             ProducerRecord<String, String> record = new ProducerRecord<>(
                     topic,
-                    String.valueOf(user.getUser_id()),
+                    String.valueOf(userDTO.getUser_id()),
                     jsonValue
             );
             RecordMetadata metadata = producer.send(record).get(5, TimeUnit.SECONDS);
-            log.info("User отправлен: {} | partition={}, offset={}", user, metadata.partition(), metadata.offset());
+            log.info("User отправлен: {} | partition={}, offset={}", userDTO, metadata.partition(), metadata.offset());
         } catch (Exception e) {
             log.error("Ошибка отправки user: {}", e.getMessage());
         }
@@ -88,7 +90,8 @@ public class KafkaProducerApp {
             List<User> users = PostgreSQLUtils.getAllUsersFromDB(urlDB,dbUsername,dbPassword,dbName);
             if (users != null && !users.isEmpty()) {
                 for(User user : users){
-                    sendUser(producer, userTopic, user);
+                    UserDTO userDTO = UserMapper.toDTO(user);
+                    sendUser(producer, userTopic, userDTO);
                 }
             } else {
                 log.warn("Нет пользователей для отправки");
