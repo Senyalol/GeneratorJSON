@@ -1,4 +1,4 @@
-package ORM;
+package DataBase;
 
 import lombok.Data;
 import org.flywaydb.core.Flyway;
@@ -32,30 +32,14 @@ public class FlywayApply {
                     .load();
 
             flyway.migrate();
-            System.out.println("✅ Миграции Flyway успешно применены");
+            System.out.println("Миграции Flyway успешно применены");
 
         } catch (Exception e) {
-            System.err.println("❌ Ошибка Flyway: " + e.getMessage());
+            System.err.println("Ошибка Flyway: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Flyway migration failed", e);
         }
 
-//        try {
-//            Flyway flyway = Flyway.configure()
-//                    .dataSource(
-//                            URL,
-//                            USERNAME,
-//                            PASSWORD
-//                    )
-//
-//                    .locations("classpath:db/migration")
-//                    .load();
-//
-//            flyway.migrate();
-//        }
-//        catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
 
     }
 

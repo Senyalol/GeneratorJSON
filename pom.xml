@@ -112,7 +112,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>Producer.KafkaProducerApp</mainClass>
+                            <mainClass>producer.KafkaProducerApp</mainClass>
                         </manifest>
                     </archive>
                     <appendAssemblyId>false</appendAssemblyId>

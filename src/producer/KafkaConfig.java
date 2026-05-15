@@ -1,4 +1,4 @@
-package Producer;
+package producer;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
@@ -71,20 +71,20 @@ public class KafkaConfig {
             // Ждем создания топика (максимум 10 секунд)
             result.all().get(10, TimeUnit.SECONDS);
 
-           // log.info("Топик '{}' успешно создан с {} партициями и репликацией {}",
-                    //topicName, partitions, replicationFactor);
+            System.out.printf("Топик %s успешно создан с %s партициями и репликацией %s",
+                    topicName, partitions, replicationFactor);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-           // log.error("Прерывание потока при создании топика '{}': {}", topicName, e.getMessage());
+            System.err.printf("Прерывание потока при создании топика %s: %s", topicName, e.getMessage());
         } catch (ExecutionException e) {
             if (e.getCause().getMessage().contains("already exists")) {
-               // log.warn("Топик '{}' уже существует", topicName);
+               System.out.printf("Топик %s уже существует", topicName);
             } else {
-                //log.error("Ошибка при создании топика '{}': {}", topicName, e.getMessage());
+                System.err.printf("Ошибка при создании топика %s: %s", topicName, e.getMessage());
             }
         } catch (TimeoutException e) {
-            //log.error("Таймаут при создании топика '{}': {}", topicName, e.getMessage());
+            System.err.printf("Таймаут при создании топика %s: %s", topicName, e.getMessage());
         }
     }
 

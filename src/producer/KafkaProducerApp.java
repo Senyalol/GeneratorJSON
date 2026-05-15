@@ -1,31 +1,30 @@
-package Producer;
+package producer;
 
 import DTO.UserMapper;
-import ORM.FlywayApply;
-import ORM.PostgreSQLUtils;
+import DataBase.FlywayApply;
+import DataBase.PostgreSQLUtils;
 import org.apache.kafka.clients.producer.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import Data.UserGenerator;
+import data.UserGenerator;
 import java.io.*;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutionException;
-import Data.User;
+import data.User;
 import DTO.UserDTO;
 
-import Data.Data;
+import data.Data;
 
 public class KafkaProducerApp {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaProducerApp.class);
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final Random random = new Random();
+   // private static final Random random = new Random();
 
     private static void sendUser(KafkaProducer<String, String> producer, String topic, UserDTO userDTO) {
         try {

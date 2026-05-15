@@ -1,12 +1,17 @@
-package Data;
+package data;
 
-import ORM.PostgreSQLUtils;
+import DataBase.PostgreSQLUtils;
 
+import exception.GenerateNullException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
 
 public class UserGenerator {
+
+    //Как аномалия
+    private static final double MAX_TRANSACTION_AMOUNT = 100000.0;
+    private static final double MIN_TRANSACTION_AMOUNT = 0.0;
 
     //Сгенерировать данные транзакций
     public static Data GenerateData(String url, String dbUsername, String dbPassword, String dbName) {
@@ -15,7 +20,7 @@ public class UserGenerator {
 
             if (randomU == null) {
                 System.err.println("Не удалось получить пользователя из Базы данных, пропуск генерации данных");
-                return null;
+                throw new GenerateNullException(randomU);
             }
 
             Random rand = new Random();

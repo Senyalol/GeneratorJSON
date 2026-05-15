@@ -1,6 +1,6 @@
 package DTO;
 
-import Data.User;
+import data.User;
 
 public class UserMapper {
 
