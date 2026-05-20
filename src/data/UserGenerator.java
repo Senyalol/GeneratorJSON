@@ -3,15 +3,17 @@ package data;
 import DataBase.PostgreSQLUtils;
 
 import exception.GenerateNullException;
+import exception.TransactionException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
 
 public class UserGenerator {
 
-    //Как аномалия
+    //Как аномалия в сервисе спарка
     private static final double MAX_TRANSACTION_AMOUNT = 100000.0;
-    private static final double MIN_TRANSACTION_AMOUNT = 0.0;
+    private static final double MIN_TRANSACTION_AMOUNT = 99;
 
     //Сгенерировать данные транзакций
     public static Data GenerateData(String url, String dbUsername, String dbPassword, String dbName) {
@@ -38,6 +40,11 @@ public class UserGenerator {
             double randomDouble = rand.nextDouble() * 10000;
             BigDecimal sum = BigDecimal.valueOf(randomDouble)
                     .setScale(2, RoundingMode.HALF_UP);
+
+            if(randomDouble < MIN_TRANSACTION_AMOUNT || randomDouble > MAX_TRANSACTION_AMOUNT){
+                System.err.println("Сумма - " + randomDouble);
+                throw new TransactionException();
+            }
 
             dataPart.setSum(sum);
 
