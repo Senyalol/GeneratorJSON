@@ -61,7 +61,8 @@ public class KafkaProducerApp {
         String bootstrapServers = System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092");
         String topic = System.getenv().getOrDefault("KAFKA_TOPIC", "user-transactions");
        // String messagesCountStr = System.getenv().getOrDefault("MESSAGES_COUNT", "100");
-        String intervalMsStr = System.getenv().getOrDefault("INTERVAL_MS", "1000");
+        //1000 - 1 секунда задержка
+        String intervalMsStr = System.getenv().getOrDefault("INTERVAL_MS", "3000");
 
         int intervalMs = Integer.parseInt(intervalMsStr);
 
