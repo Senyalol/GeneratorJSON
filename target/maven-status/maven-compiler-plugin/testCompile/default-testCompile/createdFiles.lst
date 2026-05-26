@@ -1,0 +1,14 @@
+test\PostgreSQLUtilsTest.class
+test\UserGeneratorTest$GenerateDataTests.class
+test\DataTest.class
+test\PostgreSQLUtilsTest$GetAllUsersFromDBTests.class
+test\UserMapperTest.class
+test\UserGeneratorTest$GetEnvDoubleTests.class
+test\KafkaProducerAppTest$LoadPropertiesFromFileTests.class
+test\UserMapperTest$ToDTOTests.class
+test\KafkaProducerAppTest$SendUserTests.class
+test\PostgreSQLUtilsTest$QuoteIdentifierTests.class
+test\PostgreSQLUtilsTest$DatabaseExistsTests.class
+test\KafkaProducerAppTest.class
+test\UserGeneratorTest.class
+test\DataTest$DataPropertiesTests.class
