@@ -17,8 +17,8 @@ public class UserGenerator {
     private static final Logger LOGGER = LogManager.getLogger(UserGenerator.class);
 
     //Как аномалия в сервисе спарка
-    private static final double MAX_TRANSACTION_AMOUNT = Double.parseDouble(System.getenv("MAX_TRANSACTION_AMOUNT")); //100000.0;
-    private static final double MIN_TRANSACTION_AMOUNT = Double.parseDouble(System.getenv("MIN_TRANSACTION_AMOUNT"));
+    private static final double MAX_TRANSACTION_AMOUNT = getEnvDouble("MAX_TRANSACTION_AMOUNT",100000); //100000.0;
+    private static final double MIN_TRANSACTION_AMOUNT = getEnvDouble("MIN_TRANSACTION_AMOUNT",99.9);
 
     //Сгенерировать данные транзакций
     public static Data GenerateData(String url, String dbUsername, String dbPassword, String dbName) {
@@ -59,5 +59,18 @@ public class UserGenerator {
 
     }
 
+    private static double getEnvDouble(String envName, double defaultValue) {
+        String envValue = System.getenv(envName);
+        if (envValue == null || envValue.trim().isEmpty()) {
+            LOGGER.warn("Переменная окружения {} не задана, использую значение по умолчанию: {}", envName, defaultValue);
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(envValue);
+        } catch (NumberFormatException e) {
+            LOGGER.error("Неверный формат переменной {}: {}, использую значение по умолчанию: {}", envName, envValue, defaultValue);
+            return defaultValue;
+        }
+    }
 
 }
