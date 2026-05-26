@@ -6,7 +6,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class PostgreSQLUtils {
+
+    private static final Logger LOGGER = LogManager.getLogger(PostgreSQLUtils.class);
 
     //Создать базу данных
     public static void createDatabase(String url, String dbName,
@@ -20,13 +25,13 @@ public class PostgreSQLUtils {
             if (!databaseExists(conn, dbName)) {
                 String createDbSql = "CREATE DATABASE " + quotedDbName;
                 stmt.executeUpdate(createDbSql);
-                System.out.printf("База данных '%s' создана%n", dbName);
+                LOGGER.info("База данных '{}' создана", dbName);
             } else {
-                System.out.printf("База данных '%s' уже существует%n", dbName);
+                LOGGER.info("База данных '{}' уже существует", dbName);
             }
 
         } catch (SQLException e) {
-            System.err.printf("Ошибка при создании БД '%s': %s%n", dbName, e.getMessage());
+            LOGGER.error("Ошибка при создании БД '{}': {}", dbName, e.getMessage());
             throw new RuntimeException("Failed to create database", e);
         }
     }
@@ -91,7 +96,7 @@ public class PostgreSQLUtils {
             return users;
         }
         catch (SQLException e) {
-            System.err.printf("Ошибка при создании БД '%s': %s%n", dbName, e.getMessage());
+            LOGGER.error("Ошибка при создании БД '{}': {}", dbName, e.getMessage());
             throw new RuntimeException("Failed to create database", e);
         }
 

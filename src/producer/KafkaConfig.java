@@ -11,7 +11,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class KafkaConfig {
+
+    private static final Logger LOGGER = LogManager.getLogger(KafkaConfig.class);
 
     private static final String DEFAULT_BOOTSTRAP_SERVERS = "localhost:9092";
     private static final String DEFAULT_TOPIC = "user-transactions";
@@ -71,20 +76,22 @@ public class KafkaConfig {
             // Ждем создания топика (максимум 10 секунд)
             result.all().get(10, TimeUnit.SECONDS);
 
-            System.out.printf("Топик %s успешно создан с %s партициями и репликацией %s",
+            LOGGER.info("Топик {} успешно создан с {} партициями и репликацией {}",
                     topicName, partitions, replicationFactor);
 
         } catch (InterruptedException e) {
+
             Thread.currentThread().interrupt();
-            System.err.printf("Прерывание потока при создании топика %s: %s", topicName, e.getMessage());
+            LOGGER.error("Прерывание потока при создании топика {}: {}", topicName, e.getMessage());
+
         } catch (ExecutionException e) {
             if (e.getCause().getMessage().contains("already exists")) {
-               System.out.printf("Топик %s уже существует", topicName);
+               LOGGER.info("Топик {} уже существует", topicName);
             } else {
-                System.err.printf("Ошибка при создании топика %s: %s", topicName, e.getMessage());
+                LOGGER.error("Ошибка при создании топика {}: {}", topicName, e.getMessage());
             }
         } catch (TimeoutException e) {
-            System.err.printf("Таймаут при создании топика %s: %s", topicName, e.getMessage());
+            LOGGER.error("Таймаут при создании топика {}: {}", topicName, e.getMessage());
         }
     }
 

@@ -45,6 +45,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1111
       POSTGRES_DB: bankUsers
+      #Диапазон суммы транзакции
+      MAX_TRANSACTION_AMOUNT: 100000.0
+      MIN_TRANSACTION_AMOUNT: 99
     ports:
       - "5430:5432"
     volumes:

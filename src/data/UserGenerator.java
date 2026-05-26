@@ -9,11 +9,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class UserGenerator {
 
+    private static final Logger LOGGER = LogManager.getLogger(UserGenerator.class);
+
     //Как аномалия в сервисе спарка
-    private static final double MAX_TRANSACTION_AMOUNT = 100000.0;
-    private static final double MIN_TRANSACTION_AMOUNT = 99;
+    private static final double MAX_TRANSACTION_AMOUNT = Double.parseDouble(System.getenv("MAX_TRANSACTION_AMOUNT")); //100000.0;
+    private static final double MIN_TRANSACTION_AMOUNT = Double.parseDouble(System.getenv("MIN_TRANSACTION_AMOUNT"));
 
     //Сгенерировать данные транзакций
     public static Data GenerateData(String url, String dbUsername, String dbPassword, String dbName) {
@@ -21,7 +26,7 @@ public class UserGenerator {
             User randomU = PostgreSQLUtils.getRandomUser(url,dbUsername,dbPassword,dbName);
 
             if (randomU == null) {
-                System.err.println("Не удалось получить пользователя из Базы данных, пропуск генерации данных");
+                LOGGER.error("Не удалось получить пользователя из Базы данных, пропуск генерации данных");
                 throw new GenerateNullException(randomU);
             }
 
@@ -42,7 +47,7 @@ public class UserGenerator {
                     .setScale(2, RoundingMode.HALF_UP);
 
             if(randomDouble < MIN_TRANSACTION_AMOUNT || randomDouble > MAX_TRANSACTION_AMOUNT){
-                System.err.println("Сумма - " + randomDouble);
+                LOGGER.error("Сумма - " + randomDouble);
                 throw new TransactionException();
             }
 

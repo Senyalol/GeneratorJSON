@@ -3,8 +3,13 @@ package DataBase;
 import lombok.Data;
 import org.flywaydb.core.Flyway;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Data
 public class FlywayApply {
+
+    private static final Logger LOGGER = LogManager.getLogger(FlywayApply.class);
 
     private final String URL;
     private final String USERNAME;
@@ -19,10 +24,10 @@ public class FlywayApply {
     public void ApplyMigration() {
 
         try {
-            System.out.println("========================================");
-            System.out.println("Применение миграций Flyway v9");
-            System.out.println("URL: " + URL);
-            System.out.println("========================================");
+            LOGGER.info("========================================");
+            LOGGER.info("Применение миграций Flyway v9");
+            LOGGER.info("URL: " + URL);
+            LOGGER.info("========================================");
 
             // Конфигурация для Flyway 9
             Flyway flyway = Flyway.configure()
@@ -32,10 +37,10 @@ public class FlywayApply {
                     .load();
 
             flyway.migrate();
-            System.out.println("Миграции Flyway успешно применены");
+            LOGGER.info("Миграции Flyway успешно применены");
 
         } catch (Exception e) {
-            System.err.println("Ошибка Flyway: " + e.getMessage());
+            LOGGER.error("Ошибка Flyway: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Flyway migration failed", e);
         }
