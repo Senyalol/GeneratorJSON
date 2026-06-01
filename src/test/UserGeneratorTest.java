@@ -84,8 +84,7 @@ class UserGeneratorTest {
         @Test
         @DisplayName("Should return default value when env var not set")
         void shouldReturnDefaultWhenEnvVarNotSet() {
-            // The method is private, testing via reflection or indirectly through GenerateData
-            // This test verifies that default values are used
+
             try (MockedStatic<PostgreSQLUtils> postgresMock = mockStatic(PostgreSQLUtils.class)) {
                 postgresMock.when(() -> PostgreSQLUtils.getRandomUser(anyString(), anyString(), anyString(), anyString()))
                         .thenReturn(mockUser);

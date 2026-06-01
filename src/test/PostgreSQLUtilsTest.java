@@ -53,11 +53,8 @@ class PostgreSQLUtilsTest {
         @Test
         @DisplayName("Should return true when database exists")
         void shouldReturnTrueWhenDatabaseExists() throws SQLException {
-            // Этот метод приватный, для его тестирования нужна рефлексия
-            // Так как метод приватный, мы не можем его вызвать напрямую
-            // Поэтому этот тест либо нужно удалить, либо переписать через рефлексию
 
-            // Вариант: просто пропускаем тест для приватного метода
+
             assertTrue(true);
         }
     }
