@@ -1,0 +1,16 @@
+FROM python:3.9-slim
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Устанавливаем kafka-python
+RUN pip install --no-cache-dir kafka-python
+
+# Копируем скрипт
+COPY send_anomalies.py /app/send_anomalies.py
+
+# Делаем скрипт исполняемым
+RUN chmod +x /app/send_anomalies.py
+
+# Запускаем скрипт
+CMD ["python", "/app/send_anomalies.py"]

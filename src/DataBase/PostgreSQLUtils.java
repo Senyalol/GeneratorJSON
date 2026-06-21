@@ -53,7 +53,7 @@ public class PostgreSQLUtils {
     //Вернуть случайного пользователя
     public static User getRandomUser(String url, String dbUsername, String dbPassword, String dbName){
 
-        String sqlQuery = "SELECT * FROM users ORDER BY RANDOM() LIMIT 1";;
+        String sqlQuery = "SELECT * FROM users WHERE user_id != 135 ORDER BY RANDOM() LIMIT 1";;
 
         try(Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
             Statement stmt = connection.createStatement();

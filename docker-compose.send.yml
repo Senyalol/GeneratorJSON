@@ -1,0 +1,14 @@
+services:
+  send-anomalies:
+    build:
+      context: .
+      dockerfile: Dockerfile.send
+    container_name: send-anomalies
+    networks:
+      - spark-network
+    restart: "no"
+
+networks:
+  spark-network:
+    external: true
+    name: spark-network
